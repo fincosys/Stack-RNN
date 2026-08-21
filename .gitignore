@@ -1,0 +1,8 @@
+train_toy
+train_add
+train_esn_toy
+train_esn_add
+*.o
+data/model_*
+data/log_*
+data/test_*

@@ -74,3 +74,27 @@ make toy
 ./train_toy  -ntask 2 -nchar 2 -nhid 20 -nstack 2 -lr .1 -nmax 15 -depth 1 -bptt 50 -mod 1 -nrep 2
 ./train_toy  -ntask 2 -nchar 2 -nhid 20 -nstack 2 -lr .1 -nmax 15 -depth 1 -bptt 50 -mod 1 -nrep 2 -hard
 
+# ---------------------------------------------------------------------------
+# ESN / Reservoir Computing baselines
+# ---------------------------------------------------------------------------
+make esn_toy
+
+# plain ESN on a^n b^n
+./train_esn_toy -ntask 1 -nchar 2 -nhid 100 -rho 0.9 -ridge 1e-4 -nseq 500 -nmax 10 -seed 1 -nepoch 5 -feat 1
+
+# plain ESN on a^n b^n c^n
+./train_esn_toy -ntask 1 -nchar 3 -nhid 150 -rho 0.9 -ridge 1e-4 -nseq 1000 -nmax 10 -seed 1 -nepoch 5 -feat 1
+
+# Stack-ESN (frozen stack controllers, stack-only recurrence)
+./train_esn_toy -ntask 1 -nchar 2 -nhid 100 -nstack 2 -depth 2 -mod 1 -feat 2 -rho 0.9 -ridge 1e-4 -nseq 500 -nmax 10 -nepoch 5
+
+# Stack-ESN with full reservoir recurrence + stacks
+./train_esn_toy -ntask 1 -nchar 2 -nhid 100 -nstack 2 -depth 2 -mod 2 -feat 3 -rho 0.9 -ridge 1e-4 -nseq 500 -nmax 10 -nepoch 5
+
+# SGD readout baseline
+./train_esn_toy -ntask 1 -nchar 2 -nhid 100 -fit sgd -lr 0.1 -nseq 500 -nmax 10 -nepoch 10 -feat 1
+
+# binary addition ESN
+make esn_add
+# ./train_esn_add -nhid 200 -rho 0.9 -ridge 1e-4 -nseq 2000 -nmax 15 -nepoch 10
+

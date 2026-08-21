@@ -11,6 +11,7 @@
 #define _NONLINEARITY_
 #include <algorithm>
 #include <vector>
+#include <math.h>
 
 #include "common.h"
 #include "Vec.h"
@@ -75,6 +76,37 @@ namespace rnn{
       if(e == -1) e = err.size();
       for(my_int i = b; i < e; i++)
         err[i] = err[i] * (v[i] * (1 - v[i]));
+    }
+
+  };
+
+  struct Tanh{
+
+    void static forward(my_real& v){
+      if(v > 50 ) v = 50;
+      if(v < -50 ) v = -50;
+      v = tanh(v);
+    }
+
+    void static forward(Vec& v, my_int b = -1, my_int e = -1){
+      if(b == -1) b = 0;
+      if(e == -1) e = v.size();
+      for (my_int i = b; i < e; i++)
+      {
+        if(v[i] > 50 ) v[i] = 50;
+        if(v[i] < -50 ) v[i] = -50;
+        v[i] = tanh(v[i]);
+      }
+    }
+
+    void static backward(my_real& err, const my_real& v){
+      err = err * (1 - v * v);
+    }
+
+    void static backward(Vec& err, const Vec& v, my_int b = 0, my_int e = -1){
+      if(e == -1) e = err.size();
+      for(my_int i = b; i < e; i++)
+        err[i] = err[i] * (1 - v[i] * v[i]);
     }
 
   };

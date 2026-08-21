@@ -20,6 +20,25 @@ To run the code on binary addition:
 > ./train_add 
 ```
 
+### Echo-State Network (Reservoir Computing)
+An ESN / Stack-ESN implementation lives in `ESN.h`. The reservoir and input
+weights are fixed after random initialization (spectral-radius scaled); only
+the linear readout is trained (ridge regression by default, or SGD).
+
+```
+> make esn
+> ./train_esn -ntask 1 -nchar 2 -nhid 200 -nstack 0 -ridge 1e-4 -nmax 10 -nseq 1000 -nepoch 10
+```
+
+Stack-augmented ESN (frozen stack controllers, readout from reservoir + stack tops):
+```
+> ./train_esn -ntask 1 -nchar 2 -nhid 200 -nstack 2 -depth 2 -spectral_radius 0.9 -sparsity 0.1 -leak 1.0 -ridge 1e-4 -nmax 10
+```
+
+Useful ESN options: `-spectral_radius`, `-sparsity`, `-input_scaling`, `-leak`,
+`-washout`, `-ridge`, `-train_mode ridge|sgd`, `-act tanh|sigmoid`, `-nstack`.
+See `./train_esn --help` and `script_esn.sh` for more experiments.
+
 ## Requirements
 Stack RNN works on:
 * Mac OS X

@@ -43,6 +43,80 @@ namespace rnn {
     return rand()/(my_real)RAND_MAX*(max-min)+min;
   }
 
+  // Estimate spectral radius of a square matrix via power iteration.
+  my_real power_iteration_spectral_radius(const Vec2D& m, my_int niter = 100){
+    assert(m.nrow() == m.ncol());
+    my_int n = m.nrow();
+    if(n == 0) return 0;
+    Vec v(n, 0), w(n, 0);
+    for(my_int i = 0; i < n; i++) v[i] = random_normal();
+    my_real norm = 0;
+    for(my_int i = 0; i < n; i++) norm += v[i] * v[i];
+    norm = sqrt(norm);
+    if(norm < 1e-12){
+      for(my_int i = 0; i < n; i++) v[i] = 0;
+      v[0] = 1;
+      norm = 1;
+    }
+    for(my_int i = 0; i < n; i++) v[i] /= norm;
+
+    my_real radius = 0;
+    for(my_int it = 0; it < niter; it++){
+      for(my_int i = 0; i < n; i++){
+        my_real s = 0;
+        for(my_int j = 0; j < n; j++) s += m(i, j) * v[j];
+        w[i] = s;
+      }
+      norm = 0;
+      for(my_int i = 0; i < n; i++) norm += w[i] * w[i];
+      norm = sqrt(norm);
+      if(norm < 1e-15) return 0;
+      for(my_int i = 0; i < n; i++) v[i] = w[i] / norm;
+      radius = norm;
+    }
+    return radius;
+  }
+
+  void scale_matrix(Vec2D& m, my_real factor){
+    for(my_int i = 0; i < m.size(); i++) m[i] *= factor;
+  }
+
+  // Solve A x = b for symmetric positive-definite A via Gaussian elimination.
+  // A is n x n (row-major in Vec2D), b and x are length n. A is modified.
+  bool solve_linear_system(Vec2D& A, Vec& b, Vec& x){
+    my_int n = A.nrow();
+    assert(A.ncol() == n);
+    assert(b.size() == n);
+    assert(x.size() == n);
+    for(my_int col = 0; col < n; col++){
+      my_int pivot = col;
+      my_real best = fabs(A(col, col));
+      for(my_int row = col + 1; row < n; row++){
+        my_real v = fabs(A(row, col));
+        if(v > best){ best = v; pivot = row; }
+      }
+      if(best < 1e-12) return false;
+      if(pivot != col){
+        for(my_int j = col; j < n; j++){
+          my_real tmp = A(col, j); A(col, j) = A(pivot, j); A(pivot, j) = tmp;
+        }
+        my_real tb = b[col]; b[col] = b[pivot]; b[pivot] = tb;
+      }
+      my_real diag = A(col, col);
+      for(my_int j = col; j < n; j++) A(col, j) /= diag;
+      b[col] /= diag;
+      for(my_int row = 0; row < n; row++){
+        if(row == col) continue;
+        my_real factor = A(row, col);
+        if(factor == 0) continue;
+        for(my_int j = col; j < n; j++) A(row, j) -= factor * A(col, j);
+        b[row] -= factor * b[col];
+      }
+    }
+    for(my_int i = 0; i < n; i++) x[i] = b[i];
+    return true;
+  }
+
   void matrixXvector(Vec& dest, const Vec& srcvec, const Vec2D& srcmatrix,
       const my_int& obegin, const my_int& oend,
       const my_int& ibegin, const my_int& iend, const my_int& type)

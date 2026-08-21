@@ -9,7 +9,7 @@
 CC = g++
 CFLAGS = -std=c++0x  -lm -O3 -march=native -Wall -funroll-loops -ffast-math
 
-all: toy add esn_toy esn_add
+all: toy add esn_toy esn_add esn
 
 toy : train_toy.cpp
 	$(CC) $(CFLAGS) $(OPT_DEF) train_toy.cpp -o train_toy
@@ -23,5 +23,9 @@ esn_toy : train_esn_toy.cpp
 esn_add : train_esn_add.cpp
 	$(CC) $(CFLAGS) $(OPT_DEF) train_esn_add.cpp -o train_esn_add
 
+# Compatibility alias (master used `make esn` / ./train_esn for toy tasks).
+esn : train_esn_toy.cpp
+	$(CC) $(CFLAGS) $(OPT_DEF) train_esn_toy.cpp -o train_esn
+
 clean:
-	rm -f train_toy train_add train_esn_toy train_esn_add
+	rm -f train_toy train_add train_esn_toy train_esn_add train_esn

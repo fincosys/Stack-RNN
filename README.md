@@ -57,7 +57,7 @@ Binary addition with ESN:
 | `-fit` | `ridge` or `sgd` | ridge |
 | `-nstack` / `-depth` / `-mod` | Stack-ESN options (`mod=1` stack-only rec.) | 0 / 1 / 2 |
 
-See `./train_esn_toy --help` and the ESN section of `script_tasks.sh`.
+See `./train_esn_toy --help`, `script_esn.sh`, and the ESN section of `script_tasks.sh`. `make esn` builds a `train_esn` binary (same as `train_esn_toy`) for compatibility.
 
 ## Requirements
 Stack RNN works on:

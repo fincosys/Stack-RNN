@@ -80,6 +80,29 @@ Tree helpers live in `Tree.h` and `tree_task.h` (parity / sum-mod / depth / majo
 ```
 See `./train_*_toy --help` and `script_rc_ext.sh` for more options (`-nlayers`, `-map`, `-iscale`, tree task ids 1–6).
 
+## Membrane P-systems / Butcher B-series (OEIS A000081)
+
+Cell-like **P-system** membrane structures and **Butcher B-series** elementary differentials are both indexed by **unordered rooted trees** counted by [OEIS A000081](https://oeis.org/A000081) (`1,1,2,4,9,20,48,115,…` for \(n=1,2,3,\ldots\) nodes).
+
+| Component | Header | Role |
+|-----------|--------|------|
+| Unordered rooted trees | `RootedTree.h` | A000081 catalog, symmetry \(\sigma(\tau)\), density \(\gamma(\tau)\), random membrane shapes |
+| Butcher B-series readout | `BSeries.h` | Frozen vector field \(f\); elementary differentials \(F(\tau)\); ridge features \(\propto h^{\|\tau\|}/\sigma(\tau)\,F(\tau)\) |
+| **PESN** (membrane reservoir) | `PESN.h` | Recursive reservoir on unordered membranes: \(x(m)=f(W_{\mathrm{in}}u(m)+W_{\mathrm{mem}}\bigoplus_{m'\subset m}x(m'))\) |
+| Trainer | `train_pesn_toy` | Tasks 1–6 (as TESN) plus **7** unordered parity, **8** unordered sum-mod, **9** A000081 shape class |
+
+Readout modes (`-readout`): `0` = skin/mean map ridge, `1` = B-series ridge (default), `2` = concat map + B-series.
+
+### Build and run
+```
+> make pesn_toy
+> ./train_pesn_toy -check-a000081
+> ./train_pesn_toy -ntask 7 -nlabels 2 -nhid 40 -readout 1 -bsorder 4 -ridge 1e-4 -ntree 500 -nmax 10 -seed 1
+> ./train_pesn_toy -ntask 9 -nshape 4 -nhid 40 -readout 1 -bsorder 5 -ridge 1e-4 -ntree 800 -nepoch 10 -seed 1
+> ./train_pesn_toy -ntask 1 -readout 2 -bsorder 4 -map 4 -nhid 50 -ridge 1e-4 -ntree 500 -seed 1
+```
+See `./train_pesn_toy --help` and `script_rc_ext.sh`.
+
 ## Requirements
 Stack RNN works on:
 * Mac OS X

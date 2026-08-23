@@ -6,6 +6,7 @@ train_esn_add
 train_desn_toy
 train_tesn_toy
 train_dtesn_toy
+train_pesn_toy
 *.o
 data/model_*
 data/log_*

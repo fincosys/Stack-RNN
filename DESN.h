@@ -38,6 +38,9 @@ namespace rnn
     FEAT_RES_STACK = 2,
     FEAT_RES_IN_STACK = 3
   };
+#endif
+#ifndef RNN_ESN_NONLIN_DEFINED
+#define RNN_ESN_NONLIN_DEFINED
   enum ESNNonlin {
     NL_TANH = 0,
     NL_SIGMOID = 1

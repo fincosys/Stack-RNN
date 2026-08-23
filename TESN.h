@@ -36,7 +36,8 @@
 namespace rnn
 {
 
-#ifndef _ESN_
+#ifndef RNN_ESN_NONLIN_DEFINED
+#define RNN_ESN_NONLIN_DEFINED
   enum ESNNonlin {
     NL_TANH = 0,
     NL_SIGMOID = 1

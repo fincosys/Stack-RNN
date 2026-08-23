@@ -59,6 +59,27 @@ Binary addition with ESN:
 
 See `./train_esn_toy --help`, `script_esn.sh`, and the ESN section of `script_tasks.sh`. `make esn` builds a `train_esn` binary (same as `train_esn_toy`) for compatibility.
 
+## Deep ESN / Tree-ESN / Deep Tree-ESN
+
+Extensions of the reservoir-computing line (same frozen-reservoir + ridge/SGD readout training pattern as `ESN.h`):
+
+| Model | Header | Trainer | Idea |
+|-------|--------|---------|------|
+| **DESN** (Deep-ESN) | `DESN.h` | `train_desn_toy` | Stack of sequential reservoir layers; layer 1 driven by input, layer *i* by layer *i−1* at the same step; readout on concatenated layer states |
+| **TESN** (Tree-ESN) | `TESN.h` | `train_tesn_toy` | Recursive reservoir on ordered trees; node state from label + children; state mapping (root / mean / …) → readout |
+| **DTESN** (Deep-Tree-ESN) | `DTESN.h` | `train_dtesn_toy` | Stack of recursive reservoirs on trees (deep TreeESN) |
+
+Tree helpers live in `Tree.h` and `tree_task.h` (parity / sum-mod / depth / majority trees, plus sequential tasks encoded as chain or balanced trees).
+
+### Build and run
+```
+> make desn_toy tesn_toy dtesn_toy
+> ./train_desn_toy -ntask 1 -nchar 2 -nhid 50 -nlayers 3 -rho 0.9 -ridge 1e-4 -nseq 500 -nmax 10 -seed 1
+> ./train_tesn_toy -ntask 1 -nlabels 2 -nhid 50 -map 4 -ridge 1e-4 -ntree 500 -nmax 10 -seed 1
+> ./train_dtesn_toy -ntask 1 -nlabels 2 -nhid 40 -nlayers 2 -map 4 -ridge 1e-4 -ntree 500 -nmax 10 -seed 1
+```
+See `./train_*_toy --help` and `script_rc_ext.sh` for more options (`-nlayers`, `-map`, `-iscale`, tree task ids 1–6).
+
 ## Requirements
 Stack RNN works on:
 * Mac OS X
